@@ -19,7 +19,7 @@ def main(
     """Help here!"""
     dataset = Dataset(kitti_root_dir, sequence, config)
     pipeline = Pipeline(
-        dataset, config, f"maicity_{str(sequence).zfill(2)}", jump, n_scans)
+        dataset, config, f"replica_{str(sequence).zfill(2)}", jump, n_scans)
     pipeline.run()
     pipeline.visualize() if visualize else None
 
