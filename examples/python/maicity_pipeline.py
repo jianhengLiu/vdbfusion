@@ -11,7 +11,7 @@ from vdbfusion_pipeline import VDBFusionPipeline as Pipeline
 def main(
     kitti_root_dir: str,
     sequence: int = 1,
-    config: str = "./examples/python/config/kitti.yaml",
+    config: str = "./examples/python/config/maicity.yaml",
     n_scans: int = -1,
     jump: int = 0,
     visualize: bool = False,

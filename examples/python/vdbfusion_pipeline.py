@@ -67,7 +67,7 @@ class VDBFusionPipeline:
     def _run_tsdf_pipeline(self):
         times = []
         for idx in trange(self._jump, self._jump + self._n_scans, unit=" frames"):
-            if idx % 10 == 0:
+            # if idx % 10 == 0:
                 scan, pose = self._dataset[idx]
                 tic = time.perf_counter_ns()
                 self._tsdf_volume.integrate(scan, pose)

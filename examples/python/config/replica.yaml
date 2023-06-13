@@ -21,8 +21,9 @@
 # SOFTWARE.
 
 # VDBFUSION
-voxel_size: 0.02
-sdf_trunc: 0.06
+# voxel_size: 0.02
+voxel_size: 0.05
+sdf_trunc: 0.15
 space_carving: False
 out_dir: "results/"
 

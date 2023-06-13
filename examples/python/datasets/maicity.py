@@ -72,8 +72,7 @@ class MaiCityDataset:
     def read_point_cloud(self, idx: int, scan_file: str, config: dict):
         pcd = o3d.io.read_point_cloud(self.scan_files[idx])
         points = np.asarray(pcd.points)
-        points = self._correct_scan(
-            points) if config.correct_scan else points[:, :3]
+        points = points[:, :3]
         points = points[np.linalg.norm(points, axis=1) <= config.max_range]
         points = points[np.linalg.norm(points, axis=1) >= config.min_range]
         points = transform_points(
