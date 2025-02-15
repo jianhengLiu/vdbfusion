@@ -1,3 +1,10 @@
+# Usage
+
+```
+python examples/python/maicity_pipeline.py /media/nrosliu/T7/mai_city/ply
+```
+results are saved automatically in `results`.
+
 # VDBFusion: Flexible and Efficient TSDF Integration
 
 [![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=flat-square&logo=c%2B%2B&logoColor=white)](./src/vdbfusion/vdbfusion)

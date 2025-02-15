@@ -67,12 +67,14 @@ class VDBFusionPipeline:
     def _run_tsdf_pipeline(self):
         times = []
         for idx in trange(self._jump, self._jump + self._n_scans, unit=" frames"):
-            scan, pose = self._dataset[idx]
-            tic = time.perf_counter_ns()
-            self._tsdf_volume.integrate(scan, pose)
-            toc = time.perf_counter_ns()
-            times.append(toc - tic)
-        self._res = {"mesh": self._get_o3d_mesh(self._tsdf_volume, self._config), "times": times}
+            # if idx % 10 == 0:
+                scan, pose = self._dataset[idx]
+                tic = time.perf_counter_ns()
+                self._tsdf_volume.integrate(scan, pose)
+                toc = time.perf_counter_ns()
+                times.append(toc - tic)
+        self._res = {"mesh": self._get_o3d_mesh(
+            self._tsdf_volume, self._config), "times": times}
 
     def _write_vdb(self):
         os.makedirs(self._config.out_dir, exist_ok=True)
@@ -97,7 +99,8 @@ class VDBFusionPipeline:
 
     @staticmethod
     def _get_o3d_mesh(tsdf_volume, cfg):
-        vertices, triangles = tsdf_volume.extract_triangle_mesh(cfg.fill_holes, cfg.min_weight)
+        vertices, triangles = tsdf_volume.extract_triangle_mesh(
+            cfg.fill_holes, cfg.min_weight)
         mesh = o3d.geometry.TriangleMesh(
             o3d.utility.Vector3dVector(vertices),
             o3d.utility.Vector3iVector(triangles),
@@ -123,19 +126,22 @@ class VDBFusionPipeline:
         float_size = 4
         # Always 2 grids
         mem_footprint = 2 * grid.memUsage() / (1024 * 1024)
-        dense_equivalent = 2 * (float_size * total_voxels) / (1024 * 1024 * 1024)  # GB
+        dense_equivalent = 2 * (float_size * total_voxels) / \
+            (1024 * 1024 * 1024)  # GB
 
         # compute size of .vdb file
         filename = os.path.join(self._config.out_dir, self._map_name) + ".vdb"
         file_size = float(os.stat(filename).st_size) / (1024 * 1024)
 
         # print metrics
-        trunc_voxels = int(np.ceil(self._config.sdf_trunc / self._config.voxel_size))
+        trunc_voxels = int(
+            np.ceil(self._config.sdf_trunc / self._config.voxel_size))
 
         filename = os.path.join(self._config.out_dir, self._map_name) + ".txt"
         with open(filename, "w") as f:
             stdout = sys.stdout
-            sys.stdout = f  # Change the standard output to the file we created.
+            # Change the standard output to the file we created.
+            sys.stdout = f
             print(f"--------------------------------------------------")
             print(f"Results for dataset {self._map_name}:")
             print(f"--------------------------------------------------")
