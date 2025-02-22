@@ -1,4 +1,9 @@
 # Usage
+For M2Mapping Datasets
+
+```bash
+python examples/python/depth_pipeline.py /home/chrisliu/Projects/rimv2_ws/src/RIM2/data/FAST_LIVO2_RIM_Datasets/campus
+```
 
 ```
 python examples/python/maicity_pipeline.py /media/nrosliu/T7/mai_city/ply

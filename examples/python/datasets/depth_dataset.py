@@ -19,7 +19,8 @@ def load_depth_poses(poses_txt):
 def get_ply_files(folder):
     """Get all .ply files from a folder, sorted by name."""
     return sorted(
-        [f for f in os.listdir(folder) if f.endswith(".ply")]
+        [f for f in os.listdir(folder) if f.endswith(".ply")],
+        key=lambda x: int(x.split('.')[0])
     )
 
 class DepthPoseDataset:
@@ -30,7 +31,7 @@ class DepthPoseDataset:
         """
         self.config = config
         self.data_source = data_source
-        self.scan_folder = os.path.join(self.data_source, "depth")
+        self.scan_folder = os.path.join(self.data_source, "depths")
         self.pose_file = os.path.join(self.data_source, "depth_poses.txt")
 
         self.scan_files = get_ply_files(self.scan_folder)
@@ -40,23 +41,28 @@ class DepthPoseDataset:
         return len(self.scan_files)
 
     def __getitem__(self, idx):
+        # Returns a PointCloud(np.array(N, 3))
+        # and sensor origin(np.array(3,))
+        # in the global coordinate frame.
+        
         ply_path = os.path.join(self.scan_folder, self.scan_files[idx])
         scan = o3d.io.read_point_cloud(ply_path)
         pose = self.poses[idx]
 
+        # Get points in local frame
         points = np.asarray(scan.points)
-        # Apply range filters, if needed
-        if "min_range" in self.config and "max_range" in self.config:
-            valid_idx = np.logical_and(
-                np.linalg.norm(points, axis=1) >= self.config["min_range"],
-                np.linalg.norm(points, axis=1) <= self.config["max_range"]
-            )
-            points = points[valid_idx]
+        # # Apply range filters, if needed
+        # if "min_range" in self.config and "max_range" in self.config:
+        #     valid_idx = np.logical_and(
+        #         np.linalg.norm(points, axis=1) >= self.config["min_range"],
+        #         np.linalg.norm(points, axis=1) <= self.config["max_range"]
+        #     )
+        #     points = points[valid_idx]
 
-        # Apply pose transform, if desired
-        if self.config.get("apply_pose", False):
-            tmp_cloud = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(points))
-            tmp_cloud.transform(pose)
-            points = np.asarray(tmp_cloud.points)
+        # # Apply pose transform, if desired
+        # if self.config.get("apply_pose", False):
+        tmp_cloud = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(points))
+        tmp_cloud.transform(pose)
+        points = np.asarray(tmp_cloud.points)
 
         return points, pose
